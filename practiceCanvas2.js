@@ -34,16 +34,16 @@ const onPageLoad = () =>
     // Declaration of interval object
     let interval;
 
-    // // Receives HTML elements into script
+     // Receives HTML elements into script
     // const amtInput = document.getElementById('amtInput');       // why don't i need these lines?
     // const radInput = document.getElementById('radInput');
     // const spdInput = document.getElementById('spdInput');
 
     // Binding event handler to Render Button
-    document.getElementById('renderer').onclick = (e) =>  { interval = render(interval); };
+    document.getElementById('renderer').onclick = (e) =>  { interval = renderer(interval); };
 
     // Binding event handler to Randomize Button
-    document.getElementById('randomer').onclick = (e) =>  { interval = randomize(interval) };
+    document.getElementById('randomer').onclick = (e) =>  { interval = randomer(interval) };
 
     // Initial Default Page Load
     interval = init();
@@ -51,7 +51,7 @@ const onPageLoad = () =>
 
     // Render function which takes the interval object as an argument. This allows for the same interval being passed around,
     // being able to be set and cleared whenever a new initialization is set.
-    const render = (int) => 
+    const renderer = (int) => 
     {
         // Clears previous 
         clearInterval(int);
@@ -68,8 +68,10 @@ const onPageLoad = () =>
         int = init(newAmt,newRad,newSpd);
         return int;
     }
+    
+
     // Same as above, but with randomization
-    const randomize = (int) =>
+    const randomer = (int) =>
     {
         // Clears previous 
         clearInterval(int);
@@ -77,7 +79,7 @@ const onPageLoad = () =>
         // Randomizes amount and radius coefficient
         let newAmt = Math.random() * 500;
         let newRad = Math.random() * 100;
-        let newSpd = Math.random() * 4
+        let newSpd = Math.random() * 3;
 
         // Putting (rounded) new values into the HTML element for display.
         amtInput.value = Math.floor(newAmt);
@@ -94,7 +96,7 @@ const init = (amt,rad,spd) =>
     // Declaration for 
     let amtCirc = amt;
     let radCo = rad;
-    let movSpd = spd
+    let movSpd = spd;
 
     // Default. If the two variables are found to be undefined (as with the initial page load), their default values are set to 100 and 50
     if (!amtCirc && !radCo && !movSpd)
@@ -211,6 +213,12 @@ const shapesModule = (ctx,c) =>
                 moveX *= -1;
                 moveY *= -1;
             }   
+            
+            if (posOrNeg < 0)
+            {
+                moveX *= 1;
+                moveY *= 1;
+            }
             
             return {
                 draw()
