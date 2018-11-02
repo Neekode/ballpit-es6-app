@@ -45,6 +45,10 @@ const onPageLoad = () =>
     // Binding event handler to Randomize Button
     document.getElementById('randomer').onclick = (e) =>  { interval = randomer(interval) };
 
+
+    // Event Listener for enter
+    listenForEnter();
+
     // Initial Default Page Load
     interval = init();
 }
@@ -88,6 +92,21 @@ const onPageLoad = () =>
 
         int = init(newAmt,newRad,newSpd);
         return int;
+    }
+
+    const listenForEnter = () =>
+    {
+        // Adding event listener waiting for enter key to be pressed,
+        // adds functionality where enter re-renders the page
+        document.addEventListener("keyup", (e) => 
+        {
+            // Keycode 13 is enter
+            if (event.keyCode === 13) 
+            {
+                // If enter is pressed, it simulates a click to the renderer button element.
+                document.getElementById('renderer').click();
+            }
+        });
     }
 
 // Initialization Script
@@ -213,7 +232,7 @@ const shapesModule = (ctx,c) =>
                 moveX *= -1;
                 moveY *= -1;
             }   
-            
+
             if (posOrNeg < 0)
             {
                 moveX *= 1;
@@ -255,8 +274,6 @@ const shapesModule = (ctx,c) =>
         {
             let circles = [];
             let x; let y; let r; let s;
-
-            console.log(spd);
             
             for (let i = 0; i < num; i++)
             {
@@ -314,99 +331,3 @@ const shapesModule = (ctx,c) =>
 
 // The beginning of the program!!
 onPageLoad();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            // Outside of program scope, for showcase purposes
-
-// Cool Drawing
-const coolDrawing = (shapes) =>
-{
-     for (let i = 0; i < 15; i++)
-     {
-         var circle = shapes.Circle(i,0,200,true);
-         let circle2 = shapes.Circle(0,i,200);
- 
-         let circle3 = shapes.Circle(i,9.85,200);
-         let circle4 = shapes.Circle(10,i,200);
- 
-         circle.draw();
-         circle2.draw();
-         circle3.draw();
-         circle4.draw();
-     }
-
-     const midCircle = shapes.Circle(5,5,200);
-     const midLine = shapes.Line(0,500,1000,500);
-     midCircle.draw();
-     midLine.draw();
-}
-
-//coolDrawing(shapes);
-
-// Shape Examples
-const shapeExamples = (shapes) =>
-{
-    const newPoint = shapes.Point(50,50);
-    const newLine = shapes.Line(25,25,50,50);
-    const newCircle = shapes.Circle(1,1,50);
-
-    newPoint.draw();
-    newLine.draw();
-    newCircle.draw();
-}
-
-//shapeExamples(shapes);    
-
-
-
-
-// // Function which returns an artist object,
-// // Artist object has inventory of different object...classes? it can draw and play around with
-// // Maybe even having an artist object is convoluted? dont really need to be passing this much stuff around.
-// // Gonna keep working with it though. See if i can get to the bottom of something. Maybe it can be used to draw more complex shapes?
-// const createDrawer = (c,ctx) =>
-// {
-        
-
-//     return {
-//         getCanvas: () =>
-//         {
-//             return c;
-//         },
-//         getContext: () =>
-//         {
-//             return ctx;
-//         }
-
-
-//     }
-// }
-
-
-
-// // Artist Object which draws things for us.
-// artist = createDrawer(canvas,context);
