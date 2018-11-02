@@ -112,14 +112,14 @@ const shapesModule = (ctx,c) =>
         }
 
         // Circle Generator, takes number of Circle objects to return, shapes modules, and current canvas as arguments
-        const genCircles = (num,shapes,canvas) =>
+        const genCircles = (num,rad,shapes,canvas) =>
         {
             let circles = [];
             let x; let y; 
 
             for (let i = 0; i < num; i++)
             {
-                r = 1 + (Math.random() * 50);
+                r = 1 + (Math.random() * rad);
 
                 x = r + (Math.random() * (canvas.width - (2*r)));
                 y = r + (Math.random() * (canvas.height - (2*r)));
@@ -170,17 +170,52 @@ const shapesModule = (ctx,c) =>
 
 
 
-pageLoad = () =>
+onPageLoad = () =>
 {
     // Clear Button Event Handler for button element in HTML
     document.getElementById('randomButton').onclick = (event) =>  { clear(); };
 
-    init();
+    // Declaration of new amounts
+    let newAmt; let newRad;
+    // Declaration of interval object
+    let interval;
+
+    document.getElementById('renderButton').onclick = (event) =>  
+    { 
+        // Clears previous 
+        clearInterval(interval);
+
+        // Receives HTML elements into script
+        amtInput = document.getElementById('amtInput');
+        radInput = document.getElementById('radInput');
+        
+        // Gathers values from elements
+        newAmt = amtInput.value;
+        newRad = radInput.value;
+
+        // Passes new values into initialization script
+        interval = init(newAmt, newRad);
+
+    };
+
+    // Initial Default Page Load
+    interval = init();
 }
 
 // Initialization Script
-const init = () =>
+const init = (amt,rad) =>
 {
+    // Declaration for 
+    let amtCirc = amt;
+    let radCo = rad;
+
+    // Default. If the two variables are found to be undefined (as with the initial page load), their default values are set to 100 and 50
+    if (!amtCirc && !radCo)
+    {
+        amtCirc = 100; radCo = 50;
+    }
+
+
     // Init of Canvas
     const theCanvas = document.getElementById('myCanvas');
     const theContext = theCanvas.getContext('2d');
@@ -189,13 +224,13 @@ const init = () =>
     resizeCanvas(theCanvas);
 
     
-    // Placing Context into my shapes modules to encapsulate it for usage with theShapes object instance
+    // Placing Context and Canvas into my shapes modules to encapsulate it for usage with theShapes object instance
     shapes = shapesModule(theContext,theCanvas);
 
 
         // Animation Time!!!
     // Generates Our Circles
-    let circles = genCircles(100 ,shapes,theCanvas);
+    let circles = genCircles(amtCirc, radCo, shapes,theCanvas);
 
     // Animate function sets recursive draw() calls
     const animate = () =>
@@ -210,10 +245,19 @@ const init = () =>
         circleDrawLoop(circles, theCanvas);
     }
 
-    animate();
+    // let interval = animate();
+
+    // document.getElementById('renderButton').onclick = (event) =>  
+    // { 
+    //     clearInterval(interval);
+    // }
+
+    return animate();
 }
 
-pageLoad();
+
+// The beginning of the program!!
+onPageLoad();
 
 
 
