@@ -11,22 +11,40 @@ for clean slateness. Feels like I'm starting to get adept with the basics of the
 	<head>	
 		<title> Practice Page </title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	</head>
+		<link href="https://fonts.googleapis.com/css?family=Libre+Franklin" rel="stylesheet">	</head>
 
-	<body style="margin: 0; 
+	<body style="
+				font-family: Libre Franklin;
+				margin: 0; 
 				padding:0; 
 				overflow: hidden;"> 	
 
-		<h4 style="	position: fixed; 
-					right: 20px; 
-					top: 20px; 
+		<span style="position: fixed; 
+					width: 20vw;
+					left: 10px;
+					top: 10px;
 					margin: 0; 
-					padding:0;"> Interactive Canvas App 
-					
-				<button id="clearButton">
-					Clear
+					padding:10px;
+					padding-top: 0;
+					background-color: rgba(0,0,0,0.1);"
+					> <h2 style="margin-bottom:0;">The Ballpit</h2> <h6 style="margin-top:0;">by: Neeko Blomgren </h6>
+				
+
+				Amount <br/>
+				<input type="text"/> <br /> 
+				<br/> Radius Coefficient 
+				<input type="text"/> <br />
+
+
+				<br />
+				<button id="renderButton">
+					Re-Render
 				</button>	
-				</h4> 
+
+				<button id="randomButton">
+					Randomize
+				</button>	
+			</span> 
 
 		<canvas id="myCanvas" style="border: 1px solid blue">
 

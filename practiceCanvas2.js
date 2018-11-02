@@ -1,6 +1,6 @@
 
 // Different Shape Classes
-const shapesModule = (ctx) =>
+const shapesModule = (ctx,c) =>
 {
     return {
         Point: (newX,newY) =>
@@ -14,7 +14,7 @@ const shapesModule = (ctx) =>
                     if (typeof x === "number" && typeof y === "number")
                     {
                         ctx.beginPath();
-                        ctx.arc(x,y,2,0, 2* Math.PI);
+                        ctx.arc(x,y,2,0, 2 * Math.PI);
                         ctx.fill();
                         ctx.stroke();
                     }
@@ -49,8 +49,22 @@ const shapesModule = (ctx) =>
             let y = newY;
             let r = newR;
 
-            let moveX = 1;
-            let moveY = 1;
+            let moveX; let moveY;
+
+                // Randomizes initial movement direction
+            let posOrNeg = Math.random() < 0.5 ? -1 : 1;
+
+            if(posOrNeg > 0)
+            {
+                moveX = 1;
+                moveY = 1;
+            }   
+            else 
+            {
+                moveX = -1;
+                moveY = -1;
+            }
+
 
 
             return {
@@ -75,6 +89,9 @@ const shapesModule = (ctx) =>
                 setX(newX) {x = newX},
                 setY(newY) {y = newY},
                 setR(newR) {r = newR},
+
+                setMoveX(newMoveX) {moveX = newMoveX},
+                setMoveY(newMoveY) {moveY = newMoveY},
                 
             }
         }
@@ -95,81 +112,90 @@ const shapesModule = (ctx) =>
         }
 
         // Circle Generator, takes number of Circle objects to return, shapes modules, and current canvas as arguments
-        const genCircles = (num,shapesArg,canvasArg) =>
+        const genCircles = (num,shapes,canvas) =>
         {
             let circles = [];
-            let x; let y;
+            let x; let y; 
 
             for (let i = 0; i < num; i++)
             {
-                x = Math.random() * canvasArg.width;
-                y = Math.random() * canvasArg.height;
-                r = 5 + (Math.random() * 75);
-                circles.push(shapesArg.Circle(x,y, r));
+                r = 1 + (Math.random() * 50);
+
+                x = r + (Math.random() * (canvas.width - (2*r)));
+                y = r + (Math.random() * (canvas.height - (2*r)));
+                circles.push(shapes.Circle(x,y, r));
             }
 
             return circles;
         }
 
         // Circle Draw Loop, loops through argued array and draws each 
-        const circleDrawLoop = (circArg,canvasArg) =>
+        const circleDrawLoop = (circles,canvas) =>
         {
             // Each loop, every single circle uses the same moveX and moveY, 
             // how do i define movement for each individual circle?
-            // Define it in it's closure?
-
-            let moveX = 1; let moveY = 1;
+            // Define it in it's closure? Yes!
             
-            for (let i = 0; i < circArg.length; i++)
+            for (let i = 0; i < circles.length; i++)
             {
-                circArg[i].draw();
+                let current = circles[i];
+
+                current.draw();
 
                 // Finding and defining current poisitioning
-                let currentX = circArg[i].getX();
-                let currentY = circArg[i].getY();
-                let currentR = circArg[i].getR();
+                let x = current.getX();
+                let y = current.getY();
+                let r = current.getR();
 
                 // Creating newX and newY, which are coordinate values based on the last draw() iteration, plus some sort of movement value, which keeps changing.
-                let newX = currentX + moveX;
-                let newY = currentY + moveY;
+                let newX = x + current.getMoveX();
+                let newY = y + current.getMoveY();
+
                 // Setting new poisioning for current circle
-                circArg[i].setX(newX);
-                circArg[i].setY(newY);
+                current.setX(newX);
+                current.setY(newY);
 
                 // Checks to see if the x positioning is to the maximum size of the canvas, in both the positive and negative directions
-                if (newX + currentR > canvasArg.width || newX - currentR < 0)
+                if (newX + r > canvas.width || newX - r < 0)
                 {
-                    moveX = -moveX;
+                    current.setMoveX(current.getMoveX() * -1);
                 }
                 // Checks Y
-                if (newY + currentR > canvasArg.height || currentR - 49 < 0)
+                if (newY + r > canvas.height || newY - r < 0)
                 {
-                    moveY = -moveY;
+                    current.setMoveY(current.getMoveY() * -1);
                 }
             }
         }
 
 
+
+pageLoad = () =>
+{
+    // Clear Button Event Handler for button element in HTML
+    document.getElementById('randomButton').onclick = (event) =>  { clear(); };
+
+    init();
+}
+
 // Initialization Script
 const init = () =>
 {
     // Init of Canvas
-    const canvas = document.getElementById('myCanvas');
-    const context = canvas.getContext('2d');
+    const theCanvas = document.getElementById('myCanvas');
+    const theContext = theCanvas.getContext('2d');
 
     // Resize to Window Viewport on pageload
-    resizeCanvas(canvas);
+    resizeCanvas(theCanvas);
 
-    // Clear Button Event Handler for button element in HTML
-    document.getElementById('clearButton').onclick = (event) =>  { clear(); };
-
+    
     // Placing Context into my shapes modules to encapsulate it for usage with theShapes object instance
-    shapes = shapesModule(context);
+    shapes = shapesModule(theContext,theCanvas);
 
 
         // Animation Time!!!
     // Generates Our Circles
-    let circles = genCircles(50,shapes,canvas);
+    let circles = genCircles(100 ,shapes,theCanvas);
 
     // Animate function sets recursive draw() calls
     const animate = () =>
@@ -181,14 +207,13 @@ const init = () =>
     const draw = () =>
     {
         clear();
-        circleDrawLoop(circles, canvas);
+        circleDrawLoop(circles, theCanvas);
     }
 
     animate();
 }
-init();
 
-
+pageLoad();
 
 
 
