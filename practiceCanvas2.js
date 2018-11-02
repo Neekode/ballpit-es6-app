@@ -49,6 +49,9 @@ const shapesModule = (ctx) =>
             let y = newY;
             let r = newR;
 
+            let moveX = 1;
+            let moveY = 1;
+
 
             return {
                 draw()
@@ -64,9 +67,15 @@ const shapesModule = (ctx) =>
 
                 getX() {return x},
                 getY() {return y},
+                getR() {return r},
+
+                getMoveX() {return moveX},
+                getMoveY() {return moveY},
 
                 setX(newX) {x = newX},
-                setY(newY) {y = newY}
+                setY(newY) {y = newY},
+                setR(newR) {r = newR},
+                
             }
         }
     }
@@ -83,6 +92,61 @@ const shapesModule = (ctx) =>
             const canvas = document.getElementById('myCanvas');
             const context = canvas.getContext('2d');
             context.clearRect(0,0,canvas.width,canvas.height);
+        }
+
+        // Circle Generator, takes number of Circle objects to return, shapes modules, and current canvas as arguments
+        const genCircles = (num,shapesArg,canvasArg) =>
+        {
+            let circles = [];
+            let x; let y;
+
+            for (let i = 0; i < num; i++)
+            {
+                x = Math.random() * canvasArg.width;
+                y = Math.random() * canvasArg.height;
+                r = 5 + (Math.random() * 75);
+                circles.push(shapesArg.Circle(x,y, r));
+            }
+
+            return circles;
+        }
+
+        // Circle Draw Loop, loops through argued array and draws each 
+        const circleDrawLoop = (circArg,canvasArg) =>
+        {
+            // Each loop, every single circle uses the same moveX and moveY, 
+            // how do i define movement for each individual circle?
+            // Define it in it's closure?
+
+            let moveX = 1; let moveY = 1;
+            
+            for (let i = 0; i < circArg.length; i++)
+            {
+                circArg[i].draw();
+
+                // Finding and defining current poisitioning
+                let currentX = circArg[i].getX();
+                let currentY = circArg[i].getY();
+                let currentR = circArg[i].getR();
+
+                // Creating newX and newY, which are coordinate values based on the last draw() iteration, plus some sort of movement value, which keeps changing.
+                let newX = currentX + moveX;
+                let newY = currentY + moveY;
+                // Setting new poisioning for current circle
+                circArg[i].setX(newX);
+                circArg[i].setY(newY);
+
+                // Checks to see if the x positioning is to the maximum size of the canvas, in both the positive and negative directions
+                if (newX + currentR > canvasArg.width || newX - currentR < 0)
+                {
+                    moveX = -moveX;
+                }
+                // Checks Y
+                if (newY + currentR > canvasArg.height || currentR - 49 < 0)
+                {
+                    moveY = -moveY;
+                }
+            }
         }
 
 
@@ -103,82 +167,26 @@ const init = () =>
     shapes = shapesModule(context);
 
 
-    // Animation Time!!!
+        // Animation Time!!!
+    // Generates Our Circles
+    let circles = genCircles(50,shapes,canvas);
 
-    genCircles = (num) =>
-    {
-        let circles = [];
-        let x; let y;
-
-        for (let i = 0; i < num; i++)
-        {
-            x = Math.random() * 600;
-            y = Math.random() * 600;
-            circles.push(shapes.Circle(x,y, 50));
-        }
-
-        return circles;
-    }
-    let circ = genCircles(50);
-
-
-    let moveX = 1.5; let moveY = 1.5;
-
+    // Animate function sets recursive draw() calls
     const animate = () =>
     {
         return setInterval(draw, 10);
     }
-
+    
+    // Draws scene once, calls CircleDrawLoop where implementation of bouncing circles is defined
     const draw = () =>
     {
         clear();
-
-                // animated
-        // let newCircle = shapes.Circle(startX,startY, 50);
-        // newCircle.draw();
-
-        
-
-       
-        // Creating newX and newY, which are coordinate values based on the last draw() iteration, plus some sort of movement value, which keeps changing.
-        circ[2].draw();
-
-        let currentX = circ[2].getX();
-        let currentY = circ[2].getY();
-
-        let newX = currentX + moveX;
-        let newY = currentY + moveY;
-        
-        circ[2].setX(newX);
-        circ[2].setY(newY);
-
-
-        if (circ[2].getX() + 50 > canvas.width || circ[2].getX() - 50 < 0)
-        {
-            moveX = -moveX;
-        }
-        if (circ[2].getY() + 50 > canvas.height || circ[2].getY() - 50 < 0)
-        {
-            moveY = -moveY;
-        }
-
-
-            
-        for (let i = 0; i < circ.length; i++)
-        {
-            //circ[i].draw();
-
-        }
-
-        
-        
+        circleDrawLoop(circles, canvas);
     }
-    
+
     animate();
 }
-
 init();
-
 
 
 
